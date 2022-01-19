@@ -30,7 +30,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/buttonRetry"
         android:layout_centerHorizontal="true"
-        android:text="Results could not be loaded"
+        android:text="Results not loaded"
         android:visibility="gone"
         tools:visibility="visible" />
 
@@ -46,6 +46,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/moviesList"
         android:layout_margin="5dp"
+        tools:listitem="@layout/movies_item"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         />

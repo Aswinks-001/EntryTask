@@ -1,5 +1,6 @@
 package com.entri.task.ui
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -72,5 +73,9 @@ class MainActivity : AppCompatActivity(),MoviesPagingAdapter.Onitemclick {
     }
 
     override fun onItemClickListner(movie: Movies) {
+        val intent = Intent(this, DetailActivity::class.java).apply {
+            putExtra("movie_id", movie.id)
+        }
+        startActivity(intent)
     }
 }
