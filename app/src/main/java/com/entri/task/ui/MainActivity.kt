@@ -9,6 +9,8 @@ import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
+import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,6 +20,12 @@ import com.entri.task.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.movie_load_state_footer.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChangedBy
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
@@ -25,14 +33,16 @@ class MainActivity : AppCompatActivity(),MoviesPagingAdapter.Onitemclick {
 
    // lateinit var viewModel: HomeViewModel
     private val viewModel by viewModels<HomeViewModel>()
+    val moviesPagingAdapter = MoviesPagingAdapter(this)
 
+    @ExperimentalPagingApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding:ActivityMainBinding = DataBindingUtil.setContentView(this,R.layout.activity_main)
 
         moviesList.layoutManager = GridLayoutManager(this,2)
 
-        val moviesPagingAdapter = MoviesPagingAdapter(this)
+       // loadMovies()
         binding.apply {
             moviesList.setHasFixedSize(true)
             moviesList.adapter = moviesPagingAdapter.withLoadStateHeaderAndFooter(
@@ -70,6 +80,33 @@ class MainActivity : AppCompatActivity(),MoviesPagingAdapter.Onitemclick {
         }
 
 
+//        lifecycleScope.launch {
+//            viewModel.pager.collectLatest {
+//                moviesPagingAdapter.submitData(it)
+//            }
+//        }
+//
+//
+//        moviesList.adapter = moviesPagingAdapter
+
+
+
+    }
+
+    @ExperimentalPagingApi
+    private fun loadMovies(){
+        lifecycleScope.launch {
+            viewModel.moviesresult.collectLatest {
+                moviesPagingAdapter.submitData(it)
+            }
+        }
+
+        lifecycleScope.launch {
+            moviesPagingAdapter.loadStateFlow
+                .distinctUntilChangedBy { it.refresh }
+                .filter { it.refresh is LoadState.NotLoading }
+                .collect { moviesList.scrollToPosition(0) }
+        }
     }
 
     override fun onItemClickListner(movie: Movies) {
