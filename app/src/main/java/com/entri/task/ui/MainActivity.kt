@@ -79,6 +79,8 @@ class MainActivity : AppCompatActivity(),MoviesPagingAdapter.Onitemclick {
 
         }
 
+        println("new commit for testing git through terminal")
+
 
 //        lifecycleScope.launch {
 //            viewModel.pager.collectLatest {
