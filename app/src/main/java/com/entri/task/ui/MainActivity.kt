@@ -81,6 +81,9 @@ class MainActivity : AppCompatActivity(),MoviesPagingAdapter.Onitemclick {
 
         println("new commit for testing git through terminal")
 
+        println("new commit for testing git through terminal 2")
+        println("new commit for testing git through terminal 3")
+
 
 //        lifecycleScope.launch {
 //            viewModel.pager.collectLatest {
